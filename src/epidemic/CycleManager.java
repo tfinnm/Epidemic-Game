@@ -15,6 +15,9 @@ public class CycleManager implements Runnable{
 	public static void advance() {
 		for (agent tempAgent: agent.AgentHandler) {
 			tempAgent.health(cycle);
+			for (DiseaseInstance tempDisease: tempAgent.Diseases) {
+				tempDisease.virus.spread(tempAgent,tempDisease);
+			}
 			if (tempAgent.respirations < 12) {
 				if (tempAgent.FA == null) {
 					for (TriageChair tempFA: TriageChair.TriageHandler) {
@@ -68,9 +71,6 @@ public class CycleManager implements Runnable{
 						tempAgent.home.routine(cycle);
 					}
 				}
-			}
-			for (DiseaseInstance tempDisease: tempAgent.Diseases) {
-				tempDisease.virus.spread(tempAgent,tempDisease);
 			}
 		}
 

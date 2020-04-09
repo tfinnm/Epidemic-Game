@@ -15,6 +15,8 @@ public class marker extends Renderable{
 		kitchen,
 		seat,
 		bed,
+		medBed1,
+		medBed2,
 		none
 	}
 
@@ -46,6 +48,17 @@ public class marker extends Renderable{
 		} else if (style == Style.bed) {
 			g.drawRect(xPos-2,yPos-5,4,10);
 			g.drawRect(xPos-2, yPos-5, 4, 3);
+		} else if (style == Style.medBed1) {
+			g.drawRect(xPos-2,yPos-5,4,10);
+			g.drawRect(xPos-2, yPos-5, 4, 3);
+			g.setColor(Color.green);
+			g.fillRect(xPos+3, yPos-3, 2, 6);
+		} else if (style == Style.medBed2) {
+			g.drawRect(xPos-2,yPos-5,4,10);
+			g.drawRect(xPos-2, yPos-5, 4, 3);
+			g.drawRect(xPos-4, yPos-7, 8, 2);
+			g.setColor(Color.green);
+			g.fillRect(xPos+3, yPos-3, 2, 6);
 		} else {
 		}
 	}

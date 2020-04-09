@@ -18,22 +18,83 @@ public class agent extends clickable {
 	public Event event = null;
 	public Comerce shop = null;
 	public TriageChair FA = null;
+	public BLSBed BLS = null;
+	public ALSBed ALS = null;
+
 
 	public int respirations = 16;
 	public int lungCapacity = 20;
 	public double immunity = 1.0;
 
 	public boolean remove = false;
+	public boolean remove2 = false;
 
 	public void triage() {
-		if (respirations < 12 && respirations < lungCapacity) {
+		if (lungCapacity < 10 && ALS == null) {
+			if (BLS != null) {
+				BLS.patient = null;
+				BLS = null;
+			}
+			for (ALSBed tempALS: ALSBed.beds) {
+				if (tempALS.seakTreatment(this)) {
+					System.out.println(this+" Sent ALS for "+respirations+"/"+lungCapacity);
+					break;
+				}
+			}
+		}
+		if (respirations < 10 && ALS == null && BLS == null) {
+			for (BLSBed tempBLS: BLSBed.beds) {
+				if (tempBLS.seakTreatment(this)) {
+					System.out.println(this+" Sent BLS for "+respirations+"/"+lungCapacity);
+					break;
+				}
+			}
+		}
+		if (respirations < 12 && respirations < lungCapacity && BLS == null && ALS == null) {
 			respirations++;
+			System.out.println(this+" Treated FA for "+respirations+"/"+lungCapacity);
 		}
 		for (DiseaseInstance tempDI: Diseases) {
 		}
 	}
 
+	int healthycycles = 0;
+	public void BLS() {
+		System.out.println(this+" Treated BLS for "+respirations+"/"+lungCapacity);
+		if (respirations < 12) {
+			healthycycles = 0;
+			respirations = lungCapacity;
+		} else {
+			if (healthycycles < 1) {
+				healthycycles++;
+			} else {
+				if (BLS != null) {
+					BLS.patient = null;
+					BLS = null;
+				}
+			}
+		}
+		triage();
+	}
+
+	public void ALS() {
+		System.out.println(this+" Treated ALS for "+respirations+"/"+lungCapacity);
+		if (lungCapacity  < 18) {
+			lungCapacity++;
+		} else {
+			ALS.patient = null;
+			ALS = null;
+		}
+		BLS();
+	}
+
 	public void health(int c) {
+		if (ALS != null) {
+			ALS();
+		}
+		if (BLS != null) {
+			BLS();
+		}
 		for (DiseaseInstance DI: Diseases) {
 			DI.advance(c, this);
 		}
@@ -46,7 +107,7 @@ public class agent extends clickable {
 	}
 
 	public void die() {
-		if (remove) {
+		if (remove && remove2) {
 			if (job != null) {
 				job.worker = null;
 			}
@@ -59,6 +120,12 @@ public class agent extends clickable {
 			if (FA != null) {
 				FA.patient = null;
 			}
+			if (BLS != null) {
+				BLS.patient = null;
+			}
+			if (ALS != null) {
+				ALS.patient = null;
+			}
 			if (home != null) {
 				if(gender == Gender.male) {
 					home.man = null;
@@ -68,7 +135,13 @@ public class agent extends clickable {
 			}
 			AgentHandler.remove(this);
 			clickable.ClickableHandler.remove(this);
+		}
+	}
+
+	public void rdie() {
+		if (remove) {
 			UIManager.drawlist.remove(this);
+			remove2 = true;
 		}
 	}
 

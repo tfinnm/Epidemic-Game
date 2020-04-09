@@ -19,6 +19,10 @@ public class RenderLoop implements Runnable{
 			g.setColor(new Color(255,255,255));
 			g.fillRect(0, 0, UIManager.WIDTH, UIManager.HEIGHT);
 			
+			for (int i = 0; i < agent.AgentHandler.size(); i++) {
+				agent.AgentHandler.get(i).rdie();
+			}
+			
 			for (Renderable temp: UIManager.drawlist) {
 				temp.draw(g);
 			}

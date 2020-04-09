@@ -1,5 +1,7 @@
 package scenarios;
 
+import entities.ALSBed;
+import entities.BLSBed;
 import entities.Disease;
 import entities.DiseaseInstance;
 import entities.Effect;
@@ -11,7 +13,7 @@ import prefabs.*;
 public class Test {
 
 	public static void loadScenario() {
-		Disease DT = new Disease("Covid-19/SARS-2",10,10,14);
+		Disease DT = new Disease("Covid-19/SARS-2",10,10,0);
 		DT.Symptoms.add(new Effect() {
 
 			@Override
@@ -20,7 +22,7 @@ public class Test {
 
 			@Override
 			public void cycle(int cycle, agent A) {
-				if (cycle % 3 == 0) {
+				if (cycle % 1 == 0) {
 					A.respirations--;
 				}
 			}
@@ -38,6 +40,8 @@ public class Test {
 		new agent(900,500).Diseases.add(new DiseaseInstance(DT));
 		new agent(900,600);
 		new TriageChair(50,50,55,50,50,60);
+		new BLSBed(60,60);
+		new ALSBed(70,60);
 		new SmallCafe(100,350,"Forster Hall");
 		new Apartment(100,100, "Apartment");
 		new Apartment(120,100, "Apartment");
