@@ -9,7 +9,7 @@ public class ALSBed {
 	public static ArrayList<ALSBed> beds = new ArrayList<ALSBed>();
 	
 	agent patient = null;
-	marker bed;
+	public marker bed;
 	
 	public ALSBed(int x,int y) {
 		ALSBed.beds.add(this);

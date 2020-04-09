@@ -15,61 +15,73 @@ public class CycleManager implements Runnable{
 	public static void advance() {
 		for (agent tempAgent: agent.AgentHandler) {
 			tempAgent.health(cycle);
+			tempAgent.hasPPE = false;
 			for (DiseaseInstance tempDisease: tempAgent.Diseases) {
 				tempDisease.virus.spread(tempAgent,tempDisease);
 			}
-			if (tempAgent.respirations < 12) {
-				if (tempAgent.FA == null) {
-					for (TriageChair tempFA: TriageChair.TriageHandler) {
-						if (tempFA.seakTreatment(tempAgent)) {
-							break;
-						}
-					}
-				}
-			} else if (cycle % 24 > 9 && cycle % 24 < 17) { 
-				if (cycle/24 < 6) {
-					if (tempAgent.job == null) {
-						for (Job tempJob: Job.JobHandler) {
-							if (tempJob.apply(tempAgent)) {
+			if (tempAgent.ALS == null && tempAgent.BLS == null) {
+				if (tempAgent.respirations < 12) {
+					if (tempAgent.FA == null) {
+						for (TriageChair tempFA: TriageChair.TriageHandler) {
+							if (tempFA.seakTreatment(tempAgent)) {
 								break;
 							}
 						}
+					}
+				} else if (cycle % 24 > 9 && cycle % 24 < 17) { 
+					if (cycle/24 < 6) {
+						if (tempAgent.job == null) {
+							for (Job tempJob: Job.JobHandler) {
+								if (tempJob.apply(tempAgent)) {
+									break;
+								}
+							}
+						} else {
+							tempAgent.job.routine(cycle);
+						}
 					} else {
-						tempAgent.job.routine(cycle);
+						if (tempAgent.event == null) {
+							for (Event tempEvent: Event.EventHandler) {
+								if (tempEvent.attend(tempAgent)) {
+									break;
+								}
+							}
+						} else {
+							tempAgent.event.routine(cycle);
+						}
 					}
 				} else {
-					if (tempAgent.event == null) {
-						for (Event tempEvent: Event.EventHandler) {
-							if (tempEvent.attend(tempAgent)) {
-								break;
+					if (cycle%24 == 17) {
+						if (tempAgent.shop == null) {
+							for (Comerce tempComerce: Comerce.ComerceHandler) {
+								if (tempComerce.shop(tempAgent)) {
+									tempAgent.shop.routine(cycle);
+									break;
+								}
 							}
-						}
+						} else {
+							tempAgent.shop.routine(cycle);
+						} 
 					} else {
-						tempAgent.event.routine(cycle);
+						if (tempAgent.home == null) {
+							for (House tempHome: House.HouseHandler) {
+								if (tempHome.join(tempAgent)) {
+									break;
+								}
+							}
+						} else {
+							tempAgent.home.routine(cycle);
+						}
 					}
 				}
 			} else {
-				if (cycle%24 == 17) {
-					if (tempAgent.shop == null) {
-						for (Comerce tempComerce: Comerce.ComerceHandler) {
-							if (tempComerce.shop(tempAgent)) {
-								tempAgent.shop.routine(cycle);
-								break;
-							}
-						}
-					} else {
-						tempAgent.shop.routine(cycle);
-					} 
-				} else {
-					if (tempAgent.home == null) {
-						for (House tempHome: House.HouseHandler) {
-							if (tempHome.join(tempAgent)) {
-								break;
-							}
-						}
-					} else {
-						tempAgent.home.routine(cycle);
-					}
+				if (tempAgent.ALS != null) {
+					tempAgent.xPos = tempAgent.ALS.bed.xPos;
+					tempAgent.yPos = tempAgent.ALS.bed.yPos;
+				}
+				if (tempAgent.BLS != null) {
+					tempAgent.xPos = tempAgent.BLS.bed.xPos;
+					tempAgent.yPos = tempAgent.BLS.bed.yPos;
 				}
 			}
 		}
@@ -90,7 +102,7 @@ public class CycleManager implements Runnable{
 				tempComerce.leave();
 			}
 		}
-		
+
 		for (int i = 0; i < agent.AgentHandler.size(); i++) {
 			agent.AgentHandler.get(i).die();
 		}

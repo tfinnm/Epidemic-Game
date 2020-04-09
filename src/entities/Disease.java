@@ -35,7 +35,7 @@ public class Disease {
 		for (agent tempAgent: agent.AgentHandler) {
 			if (tempAgent != A) {
 				if (Math.sqrt(Math.pow(A.xPos-tempAgent.xPos,2)+Math.pow(A.yPos-tempAgent.yPos,2)) < InfRange) {
-					if (!tempAgent.Antibodies.contains(this)) {
+					if (!tempAgent.Antibodies.contains(this) && !tempAgent.hasPPE) {
 						boolean has = false;
 						for (DiseaseInstance td: tempAgent.Diseases) {
 							if (td.virus == this) has = true;

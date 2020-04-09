@@ -22,8 +22,11 @@ public class Test {
 
 			@Override
 			public void cycle(int cycle, agent A) {
-				if (cycle % 1 == 0) {
+				if (cycle % 3 == 0) {
 					A.respirations--;
+				}
+				if (cycle % 5 == 0) {
+					A.lungCapacity--;
 				}
 			}
 			
@@ -39,9 +42,15 @@ public class Test {
 		new agent(800,600);
 		new agent(900,500).Diseases.add(new DiseaseInstance(DT));
 		new agent(900,600);
-		new TriageChair(50,50,55,50,50,60);
-		new BLSBed(60,60);
-		new ALSBed(70,60);
+		for (int i = 0; i < 100; i++) {
+			new agent(0,0);
+		}
+		new firstaid(80,320,"Mayo");
+		new urgentCare(100,320,"Health Lodge");
+		new ward(150,320,"Hospital");
+		new ICU(200,320,"Hospital");
+		new SmallDoctorsOffice(250,320,"Hospital");
+		new SmallDoctorsOffice(250,330,"Hospital");
 		new SmallCafe(100,350,"Forster Hall");
 		new Apartment(100,100, "Apartment");
 		new Apartment(120,100, "Apartment");

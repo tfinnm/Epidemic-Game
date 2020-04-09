@@ -7,6 +7,7 @@ import entities.marker.Style;
 public class TriageChair extends Job{
 
 	public static ArrayList<TriageChair> TriageHandler = new ArrayList<TriageChair>();
+	public static int PPE = 10;
 
 	marker seat;
 	marker Attendent;
@@ -35,6 +36,7 @@ public class TriageChair extends Job{
 	@Override
 	public void routine(int cycle) {
 		if (patient != null) {
+			worker.usePPE();
 			worker.xPos = Attendent.xPos;
 			worker.yPos = Attendent.yPos;
 			patient.triage();

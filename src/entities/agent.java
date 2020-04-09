@@ -20,6 +20,7 @@ public class agent extends clickable {
 	public TriageChair FA = null;
 	public BLSBed BLS = null;
 	public ALSBed ALS = null;
+	public boolean hasPPE = false;
 
 
 	public int respirations = 16;
@@ -29,6 +30,13 @@ public class agent extends clickable {
 	public boolean remove = false;
 	public boolean remove2 = false;
 
+	public void usePPE() {
+		if (TriageChair.PPE > 0) {
+			TriageChair.PPE--;
+			hasPPE = true;
+		}
+	}
+	
 	public void triage() {
 		if (lungCapacity < 10 && ALS == null) {
 			if (BLS != null) {
@@ -180,6 +188,10 @@ public class agent extends clickable {
 		if (UIManager.debug && Diseases.size() > 0) {
 			g.setColor(Color.red);
 			g.drawOval(this.xPos-4, this.yPos-4, 8, 8);
+		}
+		if (hasPPE) {
+			g.setColor(Color.CYAN);
+			g.drawOval(xPos-3, yPos-3, 6, 6);
 		}
 	}
 
