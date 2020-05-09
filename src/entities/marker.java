@@ -3,6 +3,8 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import epidemic.UIManager;
+
 public class marker extends Renderable{
 
 	public int xPos;
@@ -17,6 +19,8 @@ public class marker extends Renderable{
 		bed,
 		medBed1,
 		medBed2,
+		medBed3,
+		medBed4,
 		none
 	}
 
@@ -59,7 +63,26 @@ public class marker extends Renderable{
 			g.drawRect(xPos-4, yPos-7, 8, 2);
 			g.setColor(Color.green);
 			g.fillRect(xPos+3, yPos-3, 2, 6);
+		} else if (style == Style.medBed3) {
+			g.drawRect(xPos-2,yPos-5,4,10);
+			int[] xPoints = {xPos+8,xPos+6,xPos+8,xPos+10};
+			int[] yPoints = {yPos-4,yPos-2,yPos,yPos-2};
+			g.drawPolygon(xPoints, yPoints, 4);
+			g.setColor(Color.green);
+			g.fillRect(xPos+3, yPos-3, 2, 6);
+		} else if (style == Style.medBed4) {
+			g.drawRect(xPos-2,yPos-5,4,10);
+			g.drawRect(xPos-4, yPos-7, 8, 2);
+			int[] xPoints = {xPos+8,xPos+6,xPos+8,xPos+10};
+			int[] yPoints = {yPos-4,yPos-2,yPos,yPos-2};
+			g.drawPolygon(xPoints, yPoints, 4);
+			g.setColor(Color.green);
+			g.fillRect(xPos+3, yPos-3, 2, 6);
 		} else {
+		}
+		if (UIManager.debug) {
+			g.setColor(Color.black);
+			g.drawOval(xPos-1, yPos-1, 1, 1);
 		}
 	}
 

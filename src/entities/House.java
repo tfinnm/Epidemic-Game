@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import entities.agent.Gender;
 import entities.marker.Style;
-import epidemic.CycleManager;
 
 public class House {
 
@@ -62,7 +61,7 @@ public class House {
 				this.woman.yPos = this.idle2.yPos;
 			}
 		}
-		if (cycle %24 == 22 && man != null && woman != null && Math.random()*100 < 1) CycleManager.newAgents++;
+		if (cycle %24 == 22 && man != null && woman != null && Math.random()*100 < 1) agent.newAgents++;
 	}
 
 }

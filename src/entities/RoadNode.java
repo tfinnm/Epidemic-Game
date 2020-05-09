@@ -1,9 +1,13 @@
 package entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 public class RoadNode extends Renderable{
 
+	public static ArrayList<RoadNode> RoadNetwork = new ArrayList<RoadNode>();
+	
 	public RoadNode north = null;
 	public RoadNode south = null;
 	public RoadNode east = null;
@@ -16,9 +20,11 @@ public class RoadNode extends Renderable{
 		super();
 		xPos = x;
 		yPos = y;
+		RoadNode.RoadNetwork.add(this);
 	}
 
 	public void draw(Graphics g) {
+		g.setColor(Color.black);
 		if (north != null) {
 			g.drawLine(xPos-16, yPos-16, xPos-16, yPos-24);	
 			g.drawLine(xPos+16, yPos-16, xPos+16, yPos-24);

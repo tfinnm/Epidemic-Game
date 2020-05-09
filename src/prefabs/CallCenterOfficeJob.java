@@ -3,6 +3,7 @@ package prefabs;
 import entities.Job;
 import entities.marker;
 import entities.marker.Style;
+import epidemic.UIManager;
 
 public class CallCenterOfficeJob extends Job {
 
@@ -15,8 +16,11 @@ public class CallCenterOfficeJob extends Job {
 	}
 
 	public void routine(int cycle) {
+		if (!UIManager.closeNonEssential.isSelected()) {
+			Job.changeBalance(5);
 			this.worker.xPos = this.main.xPos;
 			this.worker.yPos = this.main.yPos;
+		}
 	}
 
 }

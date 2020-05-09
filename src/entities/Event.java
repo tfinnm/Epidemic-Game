@@ -3,6 +3,7 @@ package entities;
 import java.util.ArrayList;
 
 import entities.marker.Style;
+import epidemic.UIManager;
 
 public class Event {
 
@@ -21,7 +22,7 @@ public class Event {
 	}
 
 	public boolean attend(agent Agent) {
-			if (Attendee == null) {
+			if (Attendee == null && !UIManager.limitGatherings.isSelected()) {
 				Attendee = Agent;
 				Agent.event = this;
 				return true;

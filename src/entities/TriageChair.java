@@ -12,7 +12,7 @@ public class TriageChair extends Job{
 	marker seat;
 	marker Attendent;
 	marker Desk;
-	agent patient = null;
+	public agent patient = null;
 
 	public TriageChair(int x,int y,int x1,int y1,int x2,int y2) {
 		super();
@@ -35,6 +35,7 @@ public class TriageChair extends Job{
 
 	@Override
 	public void routine(int cycle) {
+		Job.changeBalance(1);
 		if (patient != null) {
 			worker.usePPE();
 			worker.xPos = Attendent.xPos;

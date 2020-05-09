@@ -1,19 +1,59 @@
 package scenarios;
 
-import entities.ALSBed;
-import entities.BLSBed;
+import entities.Ambulance;
 import entities.Disease;
+import entities.Disease.Dificulty;
 import entities.DiseaseInstance;
 import entities.Effect;
+import entities.FireTruck;
+import entities.Grant;
+import entities.InfectionArea;
 import entities.RoadNode;
-import entities.TriageChair;
 import entities.agent;
+import epidemic.UIManager;
 import prefabs.*;
 
-public class Test {
+public class Test implements Scenario {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7843539584523746425L;
 
-	public static void loadScenario() {
-		Disease DT = new Disease("Covid-19/SARS-2",10,10,0);
+	public String toString() {
+		return "DEV TEST";
+	}
+
+	public void loadScenario() {
+		UIManager.debug = true;
+		for (int i = 0; i < 50; i++) {
+		new Grant("Test Grant","If you see this something broke :(", true) {
+
+			@Override
+			public boolean completeConditions() {
+				return true;
+			}
+
+			@Override
+			public boolean applyConditions() {
+				return true;
+				//return CycleManager.getCycle()%16 == 0;
+			}
+
+			@Override
+			public boolean isAvailible() {
+				return true;
+				//return CycleManager.getCycle()%8 < 4;
+			}
+
+			@Override
+			public void onReward() {
+				System.out.print("YAY!");
+			}
+			
+		};
+	}
+		Disease DT = new Disease("Covid-19/SARS-2",10,10,336,168,true,true);
 		DT.Symptoms.add(new Effect() {
 
 			@Override
@@ -31,6 +71,28 @@ public class Test {
 			}
 			
 		});
+		Disease DT2 = new Disease("Common cold",10,1,12,72,false,true);
+		DT2.Symptoms.add(new Effect() {
+
+			@Override
+			public void initial(agent A) {	
+				if (A.respirations > 11) {
+					A.respirations = 11;
+				}
+			}
+			
+			@Override
+			public void cycle(int cycle, agent A) {
+				
+			}
+			
+		});
+		//DT.hasTest = true;
+		//DT.knownEffects = 1;
+		//DT.testEffectiveness = 1.0;
+		DT.hasCure = true;
+		DT.cureEffectiveness = 100;
+		DT.cureDificulty = Dificulty.Surgery;
 		new agent(150,150);
 		new agent(500,500);
 		new agent(500,600);
@@ -42,9 +104,18 @@ public class Test {
 		new agent(800,600);
 		new agent(900,500).Diseases.add(new DiseaseInstance(DT));
 		new agent(900,600);
+		new InfectionArea(100,100,10,10,DT2);
 		for (int i = 0; i < 100; i++) {
 			new agent(0,0);
 		}
+		new FireTruck(300,400);
+		new Ambulance(500,500);
+		new Ambulance(400,500);
+		new Ambulance(600,500);
+		new TraumaRoom(300,300,"Hospital");
+		new SurgeryRoom(300,400, "Hospital");
+		new HospitalPharmacy(300,600,"Hospital");
+		new commercialPharmacy(300,500,"CVS");
 		new firstaid(80,320,"Mayo");
 		new urgentCare(100,320,"Health Lodge");
 		new ward(150,320,"Hospital");

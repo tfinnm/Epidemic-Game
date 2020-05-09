@@ -8,7 +8,7 @@ public class BLSBed {
 
 	public static ArrayList<BLSBed> beds = new ArrayList<BLSBed>();
 	
-	agent patient = null;
+	public agent patient = null;
 	public marker bed;
 	
 	public BLSBed(int x,int y) {

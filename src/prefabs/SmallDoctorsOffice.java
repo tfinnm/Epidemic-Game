@@ -1,6 +1,5 @@
 package prefabs;
 
-import entities.BLSBed;
 import entities.TriageChair;
 import entities.building;
 

@@ -3,6 +3,7 @@ package entities;
 import java.util.ArrayList;
 
 import entities.marker.Style;
+import epidemic.UIManager;
 
 public class Comerce {
 
@@ -10,14 +11,17 @@ public class Comerce {
 
 	public agent Customer = null;
 	public marker spot;
+	
+	public boolean dining;
 
-	public Comerce(int x,int y) {
+	public Comerce(int x,int y,boolean d) {
 		spot = new marker (x,y,Style.none);
 		Comerce.ComerceHandler.add(this);
+		dining = d;
 	}
 
 	public boolean shop(agent Agent) {
-		if (Customer == null) {
+		if (Customer == null && !(UIManager.closeDiningRooms.isSelected() && dining)) {
 			Customer = Agent;
 			Agent.shop = this;
 			return true;

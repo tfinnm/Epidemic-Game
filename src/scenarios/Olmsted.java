@@ -4,9 +4,14 @@ import entities.RoadNode;
 import entities.agent;
 import prefabs.*;
 
-public class Olmsted {
+public class Olmsted implements Scenario{
 
-	public static void loadScenario() {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3403262381849600207L;
+
+	public void loadScenario() {
 		
 		
 		new agent(0,0);
