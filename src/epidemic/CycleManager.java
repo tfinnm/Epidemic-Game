@@ -107,6 +107,7 @@ public class CycleManager implements Runnable{
 								tempAgent.event = null;
 								tempAgent.shop = null;
 								tempAgent.home = null;
+								System.out.print(tempAgent.Diseases);
 								Object[] data = {"agent",tempAgent};
 								Client.out.writeObject(data);
 								Client.out.flush();

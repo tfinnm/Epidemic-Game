@@ -94,6 +94,7 @@ public class Client implements Runnable{
 					Object[] line = (Object[]) in.readObject();
 					if (((String)line[0]).equals("agent")) {
 						agent.AgentHandler.add((agent)line[1]);
+						System.out.print(agent.AgentHandler.get(agent.AgentHandler.size()-1).Diseases);
 					} else if (((String)line[0]).equals("msg")) {
 						messageArea.append((String)line[1]);
 					} else if (((String)line[0]).equals("scenario")) {
