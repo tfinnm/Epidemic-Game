@@ -18,6 +18,7 @@ public class ShopClerkJob extends Job {
 
 	public void routine(int cycle) {
 			Job.changeBalance(3);
+			this.worker.balance++;
 			this.worker.xPos = this.main.xPos;
 			this.worker.yPos = this.main.yPos;
 	}

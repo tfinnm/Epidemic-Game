@@ -152,6 +152,7 @@ public class Test implements Scenario {
 		new Apartment(140,200, "Apartment");
 		new Apartment(160,200, "Apartment");
 		new Apartment(180,200, "Apartment");
+		new EMSStation(600,400,3);
 		RoadNode c = new RoadNode(500,500);
 		RoadNode u = new RoadNode(500,400);
 		RoadNode l = new RoadNode(400,500);

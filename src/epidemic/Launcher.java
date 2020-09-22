@@ -33,6 +33,9 @@ public class Launcher {
 
 	static JFrame launcher;
 	
+	
+	public static Thread lt;
+	
 	public static final int version = 0;
     //private final static String URL = "http://epidemic.tfinnm.tk/updates"; //production
 	private final static String URL = "http://localhost/update"; //testing
@@ -43,21 +46,22 @@ public class Launcher {
 		launcher.setSize(1000, 500);
 		launcher.setLocation(100, 100);
 		launcher.setResizable(true);
+		
 		launcher.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel SPcontent = new JPanel(new BorderLayout());
 		JPanel MPcontent = new JPanel(new BorderLayout());
 		JEditorPane updatestext = new JEditorPane();
         updatestext.setContentType("text/html");
 		updatestext.setEditable(false);
-		try {
-			updatestext.setText(getData(URL));
-		} catch (Exception e) {
-			updatestext.setText("Unable to retreive updates...");
-		}
+//		try {
+//			updatestext.setText(getData(URL));
+//		} catch (Exception e) {
+//			updatestext.setText("Unable to retreive updates...");
+//		}
 		JScrollPane updatescroll = new JScrollPane(updatestext);
 		JTabbedPane lc = new JTabbedPane();
 		lc.addTab("Single Player", SPcontent);
-		lc.addTab("Multiplayer", MPcontent);
+		//lc.addTab("Multiplayer", MPcontent);
 		lc.addTab("News & Updates", updatescroll);
 		JButton host = new JButton("Host a server");
 		JCheckBox dedicated = new JCheckBox("Host Dedicated");
@@ -102,8 +106,13 @@ public class Launcher {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				UIManager.startGame(scenarioList.getSelectedValue());
 				launcher.dispose();
+				lt = new Thread(new Runnable() {
+					public void run() {
+						UIManager.startGame(scenarioList.getSelectedValue());
+					}
+				});
+				lt.start();
 			}
 
 		});
@@ -111,16 +120,17 @@ public class Launcher {
 		SPcontent.add(play,BorderLayout.SOUTH);
 		launcher.setContentPane(lc);
 		launcher.setVisible(true);
-		try {
-            if (Integer.parseInt(getLatestVersion()) > version) {
-                UpdateInfo(getWhatsNew());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//		try {
+//            if (Integer.parseInt(getLatestVersion()) > version) {
+//                UpdateInfo(getWhatsNew());
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
 	}
 
 	static Vector<Scenario> scenarios = new Vector<>();
+	@SuppressWarnings("rawtypes")
 	public static void loadPluggins() {
 		File pluginDirectory=new File("plugins"); //arbitrary directory
 		if(!pluginDirectory.exists()) pluginDirectory.mkdir();
@@ -144,7 +154,6 @@ public class Launcher {
 					urls.add(url);
 					jar.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -202,7 +211,8 @@ public class Launcher {
         infoPane.setText(info);
     }
 
-    private static void initUpdateComponents() {
+    @SuppressWarnings("deprecation")
+	private static void initUpdateComponents() {
     	updater = new JFrame();
     	updater.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     	updater.setTitle("New Update Found");
@@ -226,7 +236,6 @@ public class Launcher {
                 try {
 					update();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
             }

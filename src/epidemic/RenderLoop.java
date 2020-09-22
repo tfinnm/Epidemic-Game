@@ -3,7 +3,6 @@ package epidemic;
 import java.awt.Color;
 import java.awt.Graphics;
 
-
 import entities.*;
 
 public class RenderLoop implements Runnable{
@@ -28,8 +27,8 @@ public class RenderLoop implements Runnable{
 			if (UIManager.debug) g.drawString("Cycle "+CycleManager.getCycle(), 10, 10);
 			g.drawString("day "+CycleManager.getCycle()/24+" "+((CycleManager.getCycle()%12)+1)+":00", 10, 20);
 			g.drawString("Deaths "+agent.deaths, 10, 30);
-	
-			
+
+
 			UIManager.ui.repaint();
 
 			if (Thread.interrupted()) {
@@ -42,7 +41,7 @@ public class RenderLoop implements Runnable{
 			}
 		}
 	}
-	
+
 	private void updateAcrossThreads() {
 		if (UIManager.masstest) {
 			if (Job.bankBalance > agent.AgentHandler.size()*10) {
@@ -53,6 +52,36 @@ public class RenderLoop implements Runnable{
 			}
 			UIManager.masstest = false;
 		}
+		//Multiplayer movement code:
+		//		for (int i = 0; i < agent.AgentHandler.size(); i++) {
+		//			agent a = agent.AgentHandler.get(i);
+		//			if (Client.multiplayer && a.home == null) {
+		//				for (House tempHome: House.HouseHandler) {
+		//					if (tempHome.join(a)) {
+		//						break;
+		//					}
+		//				}
+		//				if (a.home == null) {
+		//					try {
+		//						a.ALS = null;
+		//						a.BLS = null;
+		//						a.FA = null;
+		//						a.job = null;
+		//						a.event = null;
+		//						a.shop = null;
+		//						a.home = null;
+		//						System.out.print(a.Diseases);
+		//						Object[] data = {"agent",a};
+		//						Client.out.writeObject(data);
+		//						Client.out.flush();
+		//						a.remove = true;
+		//
+		//					} catch (IOException e) {
+		//					}
+		//				}
+		//			}		
+		//		}
+		//end multiplayer movement code
 		for (int i = 0; i < agent.AgentHandler.size(); i++) {
 			if (agent.AgentHandler.get(i).die()) {
 				i--;
@@ -65,6 +94,10 @@ public class RenderLoop implements Runnable{
 		}
 		UIManager.Population.addPoint(UIManager.Population.getMaxX()+1, agent.AgentHandler.size());
 		UIManager.Deaths.addPoint(UIManager.Deaths.getMaxX()+1, agent.deaths);
+		if (CycleManager.getCycle() % 24 == 0) {
+			UIManager.dailyDeaths.addPoint(UIManager.Deaths.getMaxX(),agent.dailyDeaths);
+			agent.dailyDeaths = 0;
+		}
 		UIManager.Money.addPoint(UIManager.Money.getMaxX()+1, Job.bankBalance);
 		UIManager.PPETrace.addPoint(UIManager.PPETrace.getMaxX()+1, TriageChair.PPE);
 		int sum = 0;
@@ -120,6 +153,10 @@ public class RenderLoop implements Runnable{
 			if (t.patient == null) tc++;
 		}
 		UIManager.pharm.addPoint(UIManager.pharm.getMaxX()+1, tc);
+		for (int i = 0; i < Grant.grants.size(); i++) {
+			Grant.grants.get(i).update();
+		}
+		UIManager.updatelog();
 	}
 
 }

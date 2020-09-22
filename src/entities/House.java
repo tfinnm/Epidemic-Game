@@ -41,8 +41,8 @@ public class House {
 		return false;
 	}
 
-	public void routine(int cycle) {
-		if ((cycle % 24 > 21) ||(cycle % 24 < 8)) {
+	public void routine(int cycle, boolean sleep) {
+		if (sleep) {
 			if (man != null) {
 				this.man.xPos = this.bed1.xPos;
 				this.man.yPos = this.bed1.yPos;

@@ -1,7 +1,5 @@
 package epidemic;
 
-import java.io.IOException;
-
 import entities.*;
 import entities.agent.trait;
 
@@ -16,15 +14,7 @@ public class CycleManager implements Runnable{
 	}
 
 	public static void advance() {
-		for (Ambulance TA: Ambulance.dispatch) {
-			TA.reset();
-		}
-		for (FireTruck TA: FireTruck.dispatch) {
-			TA.reset();
-		}
-		for (Grant g: Grant.grants) {
-			g.update();
-		}
+		resetCycle();
 		for (int k = 0; k < agent.AgentHandler.size(); k++) {
 			agent tempAgent = agent.AgentHandler.get(k);
 			tempAgent.hasPPE = false;
@@ -34,6 +24,14 @@ public class CycleManager implements Runnable{
 
 			if(tempAgent.health(cycle)) {
 				if (tempAgent.ALS == null && tempAgent.BLS == null && !tempAgent.remove) {
+					if(tempAgent.prescribed) {
+						for (pharmacy tempP: pharmacy.PharmaHandler) {
+							if (tempP.seakTreatment(tempAgent)) {
+								UIManager.log(tempAgent+" Sent Treatment Pharmacy");
+								break;
+							}
+						}
+					}
 					if (!tempAgent.traits.contains(trait.antiestablishment) && (tempAgent.respirations < 11 || (!tempAgent.traits.contains(trait.tough) && !UIManager.discourageHospital.isSelected() && tempAgent.respirations < 12))) {
 						if (TriageChair.TriageHandler.contains(tempAgent.job)) {
 							tempAgent.job.worker = null;
@@ -46,76 +44,9 @@ public class CycleManager implements Runnable{
 								}
 							}
 						}
-					} else if (cycle % 24 > 9 && cycle % 24 < 17 && !tempAgent.stayHome()) { 
-						if (cycle/24 < 6) {
-							if (tempAgent.job == null) {
-								for (Job tempJob: Job.JobHandler) {
-									if (tempJob.apply(tempAgent)) {
-										break;
-									}
-								}
-							} else {
-								tempAgent.job.routine(cycle);
-							}
-						} else {
-							if (tempAgent.event == null) {
-								for (Event tempEvent: Event.EventHandler) {
-									if (tempEvent.attend(tempAgent)) {
-										break;
-									}
-								}
-							} else {
-								tempAgent.event.routine(cycle);
-							}
-						}
 					} else {
-						if (cycle%24 == 17 && !tempAgent.stayHome()) {
-							if (tempAgent.shop == null) {
-								for (Comerce tempComerce: Comerce.ComerceHandler) {
-									if (tempComerce.shop(tempAgent)) {
-										tempAgent.shop.routine(cycle);
-										break;
-									}
-								}
-							} else {
-								tempAgent.shop.routine(cycle);
-							} 
-						} else {
-							if (tempAgent.home == null) {
-								for (House tempHome: House.HouseHandler) {
-									if (tempHome.join(tempAgent)) {
-										break;
-									}
-								}
-							} else {
-								tempAgent.home.routine(cycle);
-							}
-						}
-					}
-					if (Client.multiplayer && tempAgent.home == null) {
-						for (House tempHome: House.HouseHandler) {
-							if (tempHome.join(tempAgent)) {
-								break;
-							}
-						}
-						if (tempAgent.home == null) {
-							try {
-								tempAgent.ALS = null;
-								tempAgent.BLS = null;
-								tempAgent.FA = null;
-								tempAgent.job = null;
-								tempAgent.event = null;
-								tempAgent.shop = null;
-								tempAgent.home = null;
-								System.out.print(tempAgent.Diseases);
-								Object[] data = {"agent",tempAgent};
-								Client.out.writeObject(data);
-								Client.out.flush();
-								tempAgent.remove = true;
-								
-							} catch (IOException e) {
-							}
-						}
+						tempAgent.Routine.doCycle(tempAgent, cycle);
+						tempAgent.LogMarker(tempAgent.xPos, tempAgent.yPos);
 					}
 				} else {
 					if (tempAgent.ALS != null) {
@@ -133,32 +64,8 @@ public class CycleManager implements Runnable{
 				if (di.cured) tempAgent.Diseases.remove(di);
 			}
 		}
-
-		//		for (int i = 0; i < newAgents; i++) {
-		//			new agent(0,0);
-		//		}
-		//
-		//		newAgents = 0;
-
-		if (cycle % 24 == 16) {
-			for (Event tempEvent: Event.EventHandler) {
-				tempEvent.leave();
-			}
-		}
-		if (cycle % 24 == 0) {
-			for (Comerce tempComerce: Comerce.ComerceHandler) {
-				tempComerce.leave();
-			}
-		}
 		
-		for (Disease d: Disease.DiseaseHandler) {
-			d.research();
-		}
-	
-		
-		for (InfectionArea IA: InfectionArea.IAHandler) {
-			IA.spread();
-		}
+		EOCDiseaseTasks();
 
 		//always runs last
 		cycle++;
@@ -171,6 +78,10 @@ public class CycleManager implements Runnable{
 			if(!UIManager.pause.getState() || UIManager.advanceOnce) {
 				UIManager.advanceOnce = false;
 				advance();
+				if(UIManager.rt.getState()==Thread.State.TERMINATED){
+					UIManager.rt = new Thread(new RenderLoop());
+					UIManager.rt.start();
+				}
 				UIManager.rt.interrupt();
 			}
 			try {
@@ -184,6 +95,29 @@ public class CycleManager implements Runnable{
 			}
 		}
 
+	}
+	
+	private static void resetCycle() {
+		for (Ambulance TA: Ambulance.dispatch) {
+			TA.reset();
+		}
+		for (FireTruck TA: FireTruck.dispatch) {
+			TA.reset();
+		}
+		for (Event tempEvent: Event.EventHandler) {
+			tempEvent.leave();
+		}
+		for (Comerce tempComerce: Comerce.ComerceHandler) {
+			tempComerce.leave();
+		}
+	}
+	private static void EOCDiseaseTasks() {
+		for (Disease d: Disease.DiseaseHandler) {
+			d.research();
+		}
+		for (InfectionArea IA: InfectionArea.IAHandler) {
+			IA.spread();
+		}
 	}
 
 }

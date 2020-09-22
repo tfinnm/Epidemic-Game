@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import entities.Disease.Dificulty;
 import epidemic.UIManager;
+import routines.*;
 
 public class agent extends clickable implements Serializable{
 
@@ -18,6 +21,7 @@ public class agent extends clickable implements Serializable{
 	public static int newAgents = 0;
 
 	public static int deaths = 0;
+	public static int dailyDeaths = 0;
 
 	public static ArrayList<agent> AgentHandler = new ArrayList<agent>();
 	public static enum trait {
@@ -27,12 +31,23 @@ public class agent extends clickable implements Serializable{
 		social //will ignore gatherings limited and still go to activities
 	}
 
-
+	public static int maxTrace = 72;
 	public ArrayList<DiseaseInstance> Diseases = new ArrayList<DiseaseInstance>();
 	public ArrayList<Disease> Antibodies = new ArrayList<Disease>();
 	public ArrayList<trait> traits = new ArrayList<trait>();
+	public Queue<int[]> contactTrace = new LinkedList<int[]>();
+	public boolean prescribed = false;
+	public void LogMarker(int x, int y) {
+		int[] data = {x,y};
+		contactTrace.add(data);
+		while (contactTrace.size() > maxTrace) {
+			contactTrace.poll();
+		}
+	}
+
 
 	public Job job = null;
+	public routine Routine = new defaultRoutine();
 	public House home = null;
 	public Event event = null;
 	public Comerce shop = null;
@@ -44,6 +59,10 @@ public class agent extends clickable implements Serializable{
 	public int respirations = 16;
 	public int lungCapacity = 20;
 	public double immunity = 1.0;
+	
+	public int happyness = 100;
+	public int balance = 0;
+	
 
 	public boolean remove = false;
 
@@ -126,6 +145,7 @@ public class agent extends clickable implements Serializable{
 					remove = true;
 					UIManager.log(this+" \"Removed\"");
 					deaths++;
+					dailyDeaths++;
 				}
 				if (tempDI.virus.hasCure) {
 					if (tempDI.virus.cureDificulty == Dificulty.FA) {
@@ -145,12 +165,7 @@ public class agent extends clickable implements Serializable{
 							break;
 						}
 						if (tempDI.virus.cureDificulty == Dificulty.Pharma) {
-							for (pharmacy tempP: pharmacy.PharmaHandler) {
-								if (tempP.seakTreatment(this)) {
-									UIManager.log(this+" Sent Treatment Pharmacy");
-									break;
-								}
-							}
+							prescribed = true;
 						}
 					}
 				}
@@ -264,6 +279,7 @@ public class agent extends clickable implements Serializable{
 				remove = true;
 				UIManager.log(this+" Died");
 				deaths++;
+				dailyDeaths++;
 			}
 			return false;
 		}
@@ -332,6 +348,14 @@ public class agent extends clickable implements Serializable{
 		if (Math.random() < 0.02) {
 			traits.add(trait.social);
 		}
+		for (Disease d: Disease.DiseaseHandler) {
+			if (d.hasVaccine && d.vaccinateNew.isSelected() && Job.bankBalance > 5) {
+				Job.changeBalance(-5);
+				if (d.canBeImmune && Math.random() < d.vaccineEffectiveness) {
+					Antibodies.add(d);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -349,11 +373,11 @@ public class agent extends clickable implements Serializable{
 			g.setColor(Color.pink);
 		}
 		g.fillOval(this.xPos-2, this.yPos-2, 4, 4);
-//		for (DiseaseInstance t: Diseases) {
-//			if (t.diagnosed) {
-//				g.drawOval(this.xPos-1, this.yPos-1, 2, 2);
-//			}
-//		}
+		//		for (DiseaseInstance t: Diseases) {
+		//			if (t.diagnosed) {
+		//				g.drawOval(this.xPos-1, this.yPos-1, 2, 2);
+		//			}
+		//		}
 		if (UIManager.debug && Diseases.size() > 0) {
 			g.setColor(Color.red);
 			g.drawOval(this.xPos-4, this.yPos-4, 8, 8);
@@ -361,6 +385,15 @@ public class agent extends clickable implements Serializable{
 		if (hasPPE) {
 			g.setColor(Color.CYAN);
 			g.drawOval(xPos-3, yPos-3, 6, 6);
+		}
+
+		for (DiseaseInstance di: Diseases) {
+			if (di.diagnosed && di.virus.trace.isSelected()) {
+				for(int[] c: contactTrace) {
+					UIManager.ui.g.setColor(Color.red);
+					UIManager.ui.g.drawOval(c[0]-5, c[1]-5, 10, 10);
+				}
+			}
 		}
 	}
 

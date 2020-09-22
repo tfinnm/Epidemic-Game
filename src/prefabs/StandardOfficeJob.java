@@ -21,6 +21,7 @@ public class StandardOfficeJob extends Job {
 	public void routine(int cycle) {
 		if (!UIManager.closeNonEssential.isSelected()) {
 			Job.changeBalance(5);
+			this.worker.balance++;
 			if (cycle % 3 == 0) {
 				this.worker.xPos = this.main.xPos;
 				this.worker.yPos = this.main.yPos;

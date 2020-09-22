@@ -1,6 +1,7 @@
 package scenarios;
 
 import entities.*;
+import epidemic.UIManager;
 import prefabs.*;
 
 public class City implements Scenario{
@@ -12,41 +13,74 @@ public class City implements Scenario{
 
 	public void loadScenario() {
 		
+		Disease[] illnesses = {
+				new Disease("SARS",10,10,336,168,true,true),
+				new Disease("Common cold",10,1,12,72,false,true),
+				new Disease("Influenza",10,5,24,120,false,true)
+		};
+		illnesses[0].Symptoms.add(new Effect() {
+
+			@Override
+			public void initial(agent A) {	
+			}
+
+			@Override
+			public void cycle(int cycle, agent A) {
+				if (cycle % 3 == 0) {
+					A.respirations--;
+				}
+				if (cycle % 5 == 0) {
+					A.lungCapacity--;
+				}
+			}
+			
+		});
+		illnesses[1].Symptoms.add(new Effect() {
+
+			@Override
+			public void initial(agent A) {	
+				if (A.respirations > 11) {
+					A.respirations = 11;
+				}
+			}
+			
+			@Override
+			public void cycle(int cycle, agent A) {
+				
+			}
+			
+		});
+		illnesses[2].Symptoms.add(new Effect() {
+
+			@Override
+			public void initial(agent A) {	
+			}
+			
+			@Override
+			public void cycle(int cycle, agent A) {
+				A.respirations--;
+			}
+			
+		});
 		
 		for (int i = 0; i < 1000; i++) {
-			new agent(0,0);
+			if (Math.random() < 0.01) {
+				int j = (int) (Math.random()*illnesses.length);
+				new agent(0,0).Diseases.add(new DiseaseInstance(illnesses[j]));
+			} else {
+				new agent(0,0);
+			}
 		}
 		new RoadGridGenerator(100,100);
-		new Ambulance(82,8);
-		new Apartment(32,16,"apartment");
-		new Apartment(52,16,"apartment");
-		new Apartment(72,16,"apartment");
-		new Apartment(92,16,"apartment");
-		new Apartment(112,16,"apartment");
-		new Apartment(32,36,"apartment");
-		new Apartment(52,36,"apartment");
-		new Apartment(72,36,"apartment");
-		new Apartment(92,36,"apartment");
-		new Apartment(112,36,"apartment");
-		new Apartment(32,56,"apartment");
-		new Apartment(52,56,"apartment");
-		new Apartment(72,56,"apartment");
-		new Apartment(92,56,"apartment");
-		new Apartment(112,56,"apartment");
-		new Apartment(32,76,"apartment");
-		new Apartment(52,76,"apartment");
-		new Apartment(72,76,"apartment");
-		new Apartment(92,76,"apartment");
-		new Apartment(112,76,"apartment");
-		new Apartment(32,96,"apartment");
-		new Apartment(52,96,"apartment");
-		new Apartment(72,96,"apartment");
-		new Apartment(92,96,"apartment");
-		new Apartment(112,96,"apartment");
-		new commercialPharmacy(164,16,"CVS");
-		new BasicShop(164,66,"General's Store");
-		new SmallCafe(296,16,"Panera");
-
+		for (int i = 32; i < UIManager.WIDTH; i+=132) {
+			for (int j = 16; j <= UIManager.HEIGHT; j+=132) {
+				new standardBlockGenerator(i,j);
+			}
+		}
+	}
+	
+	public String toString() {
+		return "Procedural City";
 	}
 
 }

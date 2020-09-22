@@ -18,6 +18,7 @@ public class CallCenterOfficeJob extends Job {
 	public void routine(int cycle) {
 		if (!UIManager.closeNonEssential.isSelected()) {
 			Job.changeBalance(5);
+			this.worker.balance++;
 			this.worker.xPos = this.main.xPos;
 			this.worker.yPos = this.main.yPos;
 		}

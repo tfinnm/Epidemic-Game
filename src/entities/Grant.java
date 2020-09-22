@@ -60,6 +60,9 @@ public abstract class Grant {
 			UIManager.GrantPanel.remove(grantPanel);
 			UIManager.GrantPanel.repaint();
 			grantPanel = null;
+			if (oneTime) {
+				grants.remove(this);
+			}
 		}
 	}
 

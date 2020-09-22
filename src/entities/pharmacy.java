@@ -40,6 +40,7 @@ public class pharmacy extends Job{
 
 	@Override
 	public void routine(int cycle) {
+		this.worker.balance++;
 		Job.changeBalance(1);
 		if (stock < 1) {
 			this.worker.xPos = restock.xPos;
@@ -57,6 +58,7 @@ public class pharmacy extends Job{
 					}
 				}
 			}
+			patient.prescribed = false;
 			patient = null;
 		} else {
 			worker.xPos = Desk.xPos;

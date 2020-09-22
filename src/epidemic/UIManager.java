@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -42,14 +45,23 @@ public class UIManager {
 
 	public static ArrayList<Renderable> drawlist = new ArrayList<Renderable>();
 
+	public static Queue<String> logQueue = new LinkedList<String>();
 	public static void log(String msg) {
-		LogScreen.setText(LogScreen.getText() + "\n" + msg);
+		logQueue.add("\n" + msg);
+	}
+	public static void updatelog() {
+		String t = "";
+		while (logQueue.size() > 0) {
+			t+=logQueue.poll();
+		}
+		LogScreen.setText(LogScreen.getText() + t);
+		Thread.yield();
 	}
 	
 	//heights
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 800;
-	static Panel ui = new Panel();
+	public static Panel ui = new Panel();
 	public static JFrame frame;
 	public static JFrame control;
 	public static JTabbedPane controlPanel;
@@ -66,12 +78,13 @@ public class UIManager {
 	public static JCheckBox discourageHospital;
 	public static JButton massTesting;
 	public static JTextPane LogScreen;
-	public static boolean debug = false;
+	public static boolean debug = true;
 	public static boolean masstest = false;
 	static JTabbedPane ResearchScreen;
 	public static JPanel GrantPanel; 
 	static ITrace2D Population;
 	static ITrace2D Deaths;
+	static ITrace2D dailyDeaths;
 	static ITrace2D knownInfected;
 	static ITrace2D Money; 
 	static ITrace2D PPETrace;
@@ -88,7 +101,7 @@ public class UIManager {
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setLocation(0, 0);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setContentPane(ui);
 		frame.setVisible(true);
 		frame.setBackground(Color.white);
@@ -107,6 +120,14 @@ public class UIManager {
 		control.setJMenuBar(menu);
 		JMenu timeMenu = new JMenu("Time");
 		menu.add(timeMenu);
+		JMenu debugMenu = new JMenu("Debug");
+		if (debug) menu.add(debugMenu);
+		JMenuItem addMoney = new JMenuItem("Add Money");
+		addMoney.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Job.changeBalance(Integer.parseInt(JOptionPane.showInputDialog("Ammount")));
+			}});
+		debugMenu.add(addMoney);
 		pause = new JCheckBoxMenuItem("pause");
 		hispeed = new JCheckBoxMenuItem("High Speed");
 		JMenuItem advance = new JMenuItem("Advance One Cycle");
@@ -137,6 +158,22 @@ public class UIManager {
 		timeMenu.add(hispeed);
 		timeMenu.add(advance);
 		timeMenu.add(start);
+		JMenu gameMenu = new JMenu("Game");
+		JMenuItem newGame = new JMenuItem("New Game");
+		newGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+			}
+		});
+		JMenuItem exitGame = new JMenuItem("Exit");
+		exitGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+		//gameMenu.add(newGame);
+		gameMenu.add(exitGame);
+		menu.add(gameMenu);
 		usePPE = new JCheckBox("Use PPE");
 		JPanel PPEScreen = new JPanel(new BorderLayout());
 		controlPanel.addTab("PPE", PPEScreen);
@@ -190,6 +227,9 @@ public class UIManager {
 		Deaths = new Trace2DLtd(720);
 		Deaths.setColor(Color.red);
 		Deaths.setName("Deaths");
+		dailyDeaths = new Trace2DLtd(720);
+		dailyDeaths.setColor(Color.black);
+		dailyDeaths.setName("Daily Deaths");
 		knownInfected = new Trace2DLtd(720);
 		knownInfected.setColor(Color.orange);
 		knownInfected.setName("Total Confirmed Cases");
@@ -200,6 +240,7 @@ public class UIManager {
 		Money.setColor(Color.green);
 		Money.setName("Balance");
 		PopChart.addTrace(Deaths);
+		PopChart.addTrace(dailyDeaths);
 		PopChart.addTrace(knownInfected);
 		PopChart.addTrace(Population);
 		EconChart.addTrace(Money);

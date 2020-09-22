@@ -14,7 +14,7 @@ import entities.clickable;
 public class Panel extends JPanel{
 
 	private BufferedImage image =  new BufferedImage(1280, 800, BufferedImage.TYPE_INT_RGB);
-	Graphics g = image.getGraphics();
+	public Graphics g = image.getGraphics();
 	
 	public Panel() {
 

@@ -23,6 +23,7 @@ public class TreatmentRoom {
 			@Override
 			public void routine(int cycle) {
 				Job.changeBalance(1);
+				this.worker.balance++;
 				if (patient != null) {
 					worker.usePPE();
 					worker.xPos = Attendent.xPos;
@@ -45,6 +46,7 @@ public class TreatmentRoom {
 			@Override
 			public void routine(int cycle) {
 				Job.changeBalance(1);
+				this.worker.balance++;
 				if (patient != null) {
 					worker.usePPE();
 					worker.xPos = Attendent2.xPos;

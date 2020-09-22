@@ -20,6 +20,7 @@ public class waiter extends Job {
 	public void routine(int cycle) {
 		if (!UIManager.closeDiningRooms.isSelected()) {	
 			Job.changeBalance(3);
+			this.worker.balance++;
 			this.worker.xPos = this.main.xPos;
 			this.worker.yPos = this.main.yPos;
 		}

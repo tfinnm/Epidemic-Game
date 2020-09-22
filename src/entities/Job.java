@@ -3,6 +3,7 @@ package entities;
 import java.util.ArrayList;
 
 import epidemic.UIManager;
+import routines.defaultRoutine;
 
 public abstract class Job {
 
@@ -24,15 +25,18 @@ public abstract class Job {
 	//produces goes here
 	
 	public agent worker = null;
+	routines.routine Routine;
 	
 	public Job() {
 		Job.JobHandler.add(this);
+		Routine = new defaultRoutine();
 	}
 	
 	public boolean apply(agent Agent) {
 		if (worker == null) {
 			worker = Agent;
 			Agent.job = this;
+			Agent.Routine = Routine;
 			return true;
 		}
 		return false;
