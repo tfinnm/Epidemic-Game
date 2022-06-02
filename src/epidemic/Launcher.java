@@ -27,7 +27,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import scenarios.City;
+import scenarios.Olmsted;
 import scenarios.Scenario;
+import scenarios.Test;
 
 public class Launcher {
 
@@ -175,6 +178,9 @@ public class Launcher {
 				}
 				catch (Exception e){e.printStackTrace();}
 			});
+			scenarios.add(new Test());
+			scenarios.add(new City());
+			scenarios.add(new Olmsted());
 		}
 
 
